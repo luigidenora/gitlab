@@ -2,6 +2,7 @@ import emojis from "./emojis.json";
 
 export const clearDurations: Record<string, string> = {
   "": "Don't clear",
+  "15_minutes": "15 minutes",
   "30_minutes": "30 minutes",
   "1_hour": "1 hour",
   "3_hours": "3 hours",
@@ -14,6 +15,7 @@ export const clearDurations: Record<string, string> = {
 };
 
 const clearDurationMinutes: Record<string, number> = {
+  "15_minutes": 15,
   "30_minutes": 30,
   "1_hour": 60,
   "3_hours": 60 * 3,

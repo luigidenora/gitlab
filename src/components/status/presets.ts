@@ -24,6 +24,7 @@ async function restorePresets(): Promise<Status[] | undefined> {
           emoji: d.emoji || "",
           message: d.message || "",
           clear_status_after: d.clear_status_after || "",
+          availability: d.availability === "busy" ? "busy" : "not_set",
         };
         if (isValidStatus(stat)) {
           result.push(stat);
@@ -87,7 +88,7 @@ export function predefinedPresets(): Status[] {
     {
       emoji: "coffee",
       message: "Coffee break",
-      clear_status_after: "30_minutes",
+      clear_status_after: "15_minutes",
     },
     {
       emoji: "palm_tree",
@@ -97,17 +98,28 @@ export function predefinedPresets(): Status[] {
     {
       emoji: "keyboard",
       message: "AFK",
-      clear_status_after: "30_minutes",
+      clear_status_after: "15_minutes",
     },
     {
       emoji: "hamburger",
       message: "Eating",
-      clear_status_after: "30_minutes",
+      clear_status_after: "1_hour",
+    },
+    {
+      emoji: "alien",
+      message: "Working on!",
+      clear_status_after: "",
+    },
+    {
+      emoji: "red_circle",
+      message: "Busy on Other Projects",
+      clear_status_after: "8_hours",
+      availability: "busy",
     },
     {
       emoji: "globe_with_meridians",
       message: "Just saving the World",
       clear_status_after: "",
-    },
+    }
   ];
 }

@@ -365,6 +365,7 @@ export interface Status {
   message: string;
   clear_status_after?: string | undefined;
   clear_status_at?: Date | undefined;
+  availability?: 'busy' | 'not_set';
 }
 
 export interface MergeRequestApprovals {
@@ -956,6 +957,7 @@ export class GitLab {
         message: data.message,
         emoji: data.emoji,
         clear_status_at: data.clear_status_at ? new Date(data.clear_status_at as string) : undefined,
+        availability: data.availability === "busy" ? "busy" : "not_set",
       };
     });
     return status;
@@ -965,6 +967,7 @@ export class GitLab {
     const params: Record<string, string> = {
       emoji: status.emoji,
       message: status.message,
+      availability: status.availability === "busy" ? "busy" : "not_set",
     };
     if (status.clear_status_after && status.clear_status_after.length > 0) {
       params.clear_status_after = status.clear_status_after;

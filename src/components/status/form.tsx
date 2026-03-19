@@ -19,6 +19,7 @@ export function StatusForm(props: {
   const emoji = es?.emoji;
   const message = es?.message;
   const duration = es?.clear_status_after || "";
+  const availability = es?.availability === 'busy' || false;
   return (
     <Form
       actions={
@@ -30,6 +31,7 @@ export function StatusForm(props: {
       <StatusEmojiDropDown id="emoji" title="Emoji" defaultValue={emoji} />
       <Form.TextField id="message" title="Message" defaultValue={message} />
       <StatusDurationDropDown id="clear_status_after" defaultValue={duration} />
+      <StatusBusyCheckbox id="availability" title="Busy" defaultValue={availability} />
     </Form>
   );
 }
@@ -53,6 +55,9 @@ function StatusEmojiDropDown(props: { id: string; title: string; defaultValue?: 
       ))}
     </Form.Dropdown>
   );
+}
+function StatusBusyCheckbox(props: { id: string; title: string; defaultValue?: boolean | undefined }) {
+  return <Form.Checkbox id={props.id} title={props.title} label={props.title} defaultValue={props.defaultValue} />;
 }
 
 export function StatusFormSet(props: { setCurrentStatus?: React.Dispatch<React.SetStateAction<Status | undefined>> }) {
@@ -78,6 +83,7 @@ function getValidStatusFromFormValue(values: Form.Values): Status {
     message: values.message,
     clear_status_after: values.clear_status_after,
     clear_status_at: getClearDurationDate(values.clear_status_after),
+    availability: values.availability ? "busy" : "not_set",
   };
   if (!isValidStatus(s)) {
     throw Error("Invalid Status");

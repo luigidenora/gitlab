@@ -84,6 +84,7 @@ function StatusCurrentListItem(props: {
   if (status && status.clear_status_at !== undefined && status.clear_status_at instanceof Date) {
     durationText = `Clears ${formatDate(status.clear_status_at)}`;
   }
+  const busyBadge = status?.availability === "busy" ? "🔴 Busy" : undefined;
   const setNoStatus = () => {
     emojiIcon = "🗨️";
     title = "No Status";
@@ -106,6 +107,7 @@ function StatusCurrentListItem(props: {
       title={title}
       icon={emojiIcon}
       subtitle={durationText}
+      accessories={busyBadge ? [{ text: busyBadge }] : undefined}
       actions={
         <ActionPanel>
           <ActionPanel.Section>
@@ -138,6 +140,7 @@ export function StatusPresetListItem(props: {
       title={s.message}
       icon={emojiSymbol(s.emoji)}
       subtitle={clearDurationText(s.clear_status_after)}
+      accessories={s.availability === "busy" ? [{ text: "🔴 Busy" }] : undefined}
       actions={
         <ActionPanel>
           <ActionPanel.Section>
