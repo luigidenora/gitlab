@@ -365,7 +365,7 @@ export interface Status {
   message: string;
   clear_status_after?: string | undefined;
   clear_status_at?: Date | undefined;
-  availability?: 'busy' | 'not_set';
+  availability?: "busy" | "not_set";
 }
 
 export interface MergeRequestApprovals {
@@ -471,6 +471,29 @@ export class GitLab {
     } catch (error: any) {
       throw Error(error); // rethrow error, otherwise raycast could not catch the error
     }
+  }
+
+  public async fetchRaw(url: string): Promise<Response> {
+    const fetcher = this.getFetcher();
+    return await fetcher(url, {
+      method: "GET",
+    });
+  }
+
+  public async fetchProjectUpload(projectId: number, uploadPath: string): Promise<Response> {
+    const normalizedPath = uploadPath.replace(/^\/uploads\//i, "").replace(/^\/+/, "");
+    const encodedPath = normalizedPath
+      .split("/")
+      .filter((segment) => segment.length > 0)
+      .map((segment) => encodeURIComponent(segment))
+      .join("/");
+
+    const fullUrl = `${this.url}/api/v4/projects/${projectId}/uploads/${encodedPath}`;
+    const fetcher = this.getFetcher();
+
+    return await fetcher(fullUrl, {
+      method: "GET",
+    });
   }
 
   public async downloadFile(url: string, params: { localFilepath: string }): Promise<string> {
@@ -609,6 +632,31 @@ export class GitLab {
     return result;
   }
 
+  async getWorkItem(projectID: number, workItemIid: number): Promise<Issue> {
+    const projectPrefix = `projects/${projectID}/work_items/${workItemIid}`;
+    const result: Issue = await this.fetch(`${projectPrefix}`).then((item) => {
+      return {
+        title: item.title || "",
+        description: item.description || "",
+        web_url: item.web_url || "",
+        id: item.id || 0,
+        iid: item.iid || workItemIid,
+        reference_full: item.references?.full || `#${workItemIid}`,
+        state: item.state || "",
+        updated_at: item.updated_at || "",
+        created_at: item.created_at || "",
+        author: maybeUserFromJson(item.author),
+        assignees: (item.assignees || []).map(userFromJson),
+        project_id: item.project_id || projectID,
+        milestone: undefined,
+        labels: (item.labels || []) as Label[],
+        user_notes_count: item.user_notes_count,
+        merge_requests_count: item.merge_requests_count || 0,
+      };
+    });
+    return result;
+  }
+
   async getGroupIssues(params: Record<string, any>, groupID: number): Promise<Issue[]> {
     if (!params.with_labels_details) {
       params.with_labels_details = "true";
@@ -726,6 +774,14 @@ export class GitLab {
 
   async getProject(projectID: number): Promise<Project> {
     const pro: Project = await this.fetch(`projects/${projectID}`).then((project) => {
+      return dataToProject(project);
+    });
+    return pro;
+  }
+
+  async getProjectByPath(projectPath: string): Promise<Project> {
+    const encodedPath = encodeURIComponent(projectPath);
+    const pro: Project = await this.fetch(`projects/${encodedPath}`).then((project) => {
       return dataToProject(project);
     });
     return pro;

@@ -23,6 +23,23 @@
       "mode": "view"
     },
     {
+      "name": "issue_export_azure",
+      "title": "Export Issues to Azure Csv",
+      "subtitle": "GitLab",
+      "description": "Export GitLab issue URLs into Azure-compatible CSV with embedded media",
+      "mode": "view",
+      "preferences": [
+        {
+          "name": "exportOutputDir",
+          "description": "Directory where exported CSV files are saved",
+          "type": "textfield",
+          "required": false,
+          "title": "CSV Output Directory",
+          "placeholder": "e.g. C:\\Users\\me\\Downloads"
+        }
+      ]
+    },
+    {
       "name": "issue_create",
       "title": "Create Issue",
       "subtitle": "GitLab",
@@ -439,6 +456,7 @@
     "fuse.js": "^6.4.6",
     "graphql": "^15.5.1",
     "javascript-time-ago": "^2.3.10",
+    "marked": "^18.0.2",
     "node-fetch": "^3.2.10",
     "open": "^8.2.1",
     "url-join": "^4.0.1",
